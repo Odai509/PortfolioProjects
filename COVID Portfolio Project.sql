@@ -164,3 +164,4 @@ WHERE dea.continent IS NOT NULL
 
 SELECT *, (CumulativePeopleVaccinated/population)*100 AS CumulativePrecentPopulationVaccinated
 FROM PrecentPopulationVaccinated	
+
