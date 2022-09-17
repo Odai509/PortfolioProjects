@@ -46,6 +46,8 @@ DROP COLUMN SaleDate_2;
 
 -- Populate Property Address data 
 
+--USING JOIN
+
 
 Select *
 From PortfolioProject.dbo.NashvilleHousing
@@ -145,6 +147,7 @@ From PortfolioProject.dbo.NashvilleHousing
 
 -- Change Y and N to Yes and No in "Sold as Vacant" field
 
+--USING CASE
 
 Select Distinct(SoldAsVacant), Count(SoldAsVacant)
 From PortfolioProject.dbo.NashvilleHousing
@@ -170,23 +173,23 @@ SET SoldAsVacant = (CASE WHEN SoldAsVacant = 'Y' THEN 'Yes'
 
 -- Remove Duplicates
 
---USING ROW_NUMBER() is a window function that assigns a sequential integer number to each row in the query’s result set.
+--USING ROW_NUMBER() is a window function that assigns a sequential integer number to each row in the queryâ€™s result set.
 
 -----------------------------------------
 
 ---- Method 1 (USING the subquery)
 
 SELECT * FROM (
-    SELECT *
-		, ROW_NUMBER() OVER (
-						PARTITION BY ParcelID,
-										PropertyAddress,
-										SaleDate,
-										SalePrice,
-										LegalReference
-						ORDER BY UniqueID DESC) row_num 
-	From PortfolioProject.dbo.NashvilleHousing
-    ) t    
+SELECT *
+, ROW_NUMBER() OVER (
+			PARTITION BY ParcelID,
+						PropertyAddress,
+						SaleDate,
+						SalePrice,
+						LegalReference
+			ORDER BY UniqueID DESC) row_num 
+From PortfolioProject.dbo.NashvilleHousing
+) t    
 WHERE
     row_num > 1 ;
 
@@ -198,14 +201,15 @@ WHERE
 WITH RowNumCTE AS(
 SELECT *
 , ROW_NUMBER() OVER (
-					PARTITION BY ParcelID,
-									PropertyAddress,
-									SaleDate,
-									SalePrice,
-									LegalReference
-					ORDER BY UniqueID DESC) row_num 
-From PortfolioProject.dbo.NashvilleHousing
+			PARTITION BY ParcelID,
+						PropertyAddress,
+						SaleDate,
+						SalePrice,
+						LegalReference
+			ORDER BY UniqueID DESC) row_num 
+From PortfolioProject.dbo.NashvilleHousing  
 )
+
 Select *
 From RowNumCTE
 Where row_num > 1
@@ -228,3 +232,4 @@ From PortfolioProject.dbo.NashvilleHousing
 
 ALTER TABLE PortfolioProject.dbo.NashvilleHousing
 DROP COLUMN OwnerAddress, TaxDistrict, PropertyAddress, SaleDate
+
